@@ -41,12 +41,12 @@ jobs:
         run: ./.github/actions/docker-cache/restore.sh ${{ runner.temp }}/docker_cache/cache.tar
 
       - name: Do the build
-        run: docker build . --target builder -t goos-builder:$GITHUB_SHA &&
+        run: docker build . --target builder -t builder:$GITHUB_SHA &&
              docker build . --target checker
 
       - name: Capture the reports as artifacts
         if: always()
-        run: ./scripts/retrieve-docker-build-logs.sh goos-builder ${{ github.sha }}
+        run: ./scripts/retrieve-docker-build-logs.sh builder ${{ github.sha }}
 
       - name: Archive reports
         if: always()
@@ -66,7 +66,7 @@ jobs:
 
       - name: Link to Reports
         if: always()
-        run: echo "Reports are published at https://mahoney-playground.github.io/goos/builds/${{ github.sha }}/build-reports"
+        run: echo "Reports are published at https://mahoney.github.io/download-dependencies/builds/${{ github.sha }}/build-reports"
 
       - name: Backup docker
         run: ./.github/actions/docker-cache/backup.sh ${{ runner.temp }}/docker_cache/cache.tar
