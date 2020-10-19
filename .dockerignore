@@ -1,0 +1,17 @@
+/builds/
+**/build/
+**/.gradle/
+**/out/
+**/tmp/
+
+/.git/
+.gitattributes
+.gitignore
+/.idea/
+**/.DS_Store
+/.github/
+Dockerfile
+.dockerignore
+**/docker-compose.yml
+
+docker-openfire

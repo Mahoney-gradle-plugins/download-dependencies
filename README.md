@@ -38,3 +38,20 @@ RUN --network=none \
 to ensure that the actual build occurs without a network connection and
 so will fail if, for instance, a test is checked in that depends on a 
 remote service.
+
+## Development
+
+Build locally:
+```bash
+./gradlew build
+```
+Output will be under `build` & if successful the binary will be under
+`build/libs`.
+
+Build in docker:
+```bash
+docker build . --target builder -t plugin:latest && docker build . && \
+docker cp "$(docker create plugin:latest):/home/worker/work/build" .
+```
+Output will be under `build` & if successful the binary will be under
+`build/libs`.
