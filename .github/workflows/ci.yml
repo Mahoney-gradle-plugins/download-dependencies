@@ -1,0 +1,72 @@
+name: Continuous Integration build
+
+on:
+  push:
+    branches-ignore:
+      - 'abandoned-*'
+  schedule:
+    # Daily at 2AM
+    # * is a special character in YAML so you have to quote this string
+    - cron: '0 2 * * *'
+
+env:
+  BUILDKIT_PROGRESS: plain
+  PROGRESS_NO_TRUNC: 1
+  cache-name: docker-cache-1
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Cache docker
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.temp }}/docker_cache
+          # Always want a cache miss on the first build of the day, which should be the scheduled
+          # overnight one. Proves the build works from scratch, and gives you a nice clean cache to
+          # work with each day.
+          key: ${{ env.cache-name }}_${{ steps.date.outputs.date }}-${{ github.ref }}-${{ github.run_number }}
+          restore-keys: |
+            ${{ env.cache-name }}_${{ steps.date.outputs.date }}-${{ github.ref }}-
+            ${{ env.cache-name }}_${{ steps.date.outputs.date }}-
+
+      - name: Restore docker
+        run: ./.github/actions/docker-cache/restore.sh ${{ runner.temp }}/docker_cache/cache.tar
+
+      - name: Do the build
+        run: docker build . --target builder -t goos-builder:$GITHUB_SHA &&
+             docker build . --target checker
+
+      - name: Capture the reports as artifacts
+        if: always()
+        run: ./scripts/retrieve-docker-build-logs.sh goos-builder ${{ github.sha }}
+
+      - name: Archive reports
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: build-reports
+          path: builds/${{ github.sha }}/build-reports
+
+      - name: Publish Reports
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@3.4.2
+        with:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: builds
+          TARGET_FOLDER: builds
+
+      - name: Link to Reports
+        if: always()
+        run: echo "Reports are published at https://mahoney-playground.github.io/goos/builds/${{ github.sha }}/build-reports"
+
+      - name: Backup docker
+        run: ./.github/actions/docker-cache/backup.sh ${{ runner.temp }}/docker_cache/cache.tar
