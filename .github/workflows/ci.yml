@@ -10,6 +10,8 @@ on:
     - cron: '0 2 * * *'
 
 env:
+  COMPOSE_DOCKER_CLI_BUILD: 1
+  DOCKER_BUILDKIT: 1
   BUILDKIT_PROGRESS: plain
   PROGRESS_NO_TRUNC: 1
   cache-name: docker-cache-1
