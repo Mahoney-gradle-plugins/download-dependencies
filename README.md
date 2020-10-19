@@ -50,7 +50,7 @@ Output will be under `build` & if successful the binary will be under
 
 Build in docker:
 ```bash
-docker build . -t plugin:latest && \
+DOCKER_BUILDKIT=1 docker build . -t plugin:latest && \
 docker cp "$(docker create plugin:latest):/home/worker/work/build" .
 ```
 Output will be under `build` & if successful the binary will be under
