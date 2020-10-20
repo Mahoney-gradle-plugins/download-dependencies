@@ -1,4 +1,4 @@
-package uk.org.lidalia.gradle.plugins.downloaddependencies
+package gradle.plugins.uk.org.lidalia.downloaddependencies
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContain
@@ -8,7 +8,7 @@ class DownloadDependenciesPluginSpec : StringSpec({
 
   "task applied to single project" {
     val project = ProjectBuilder.builder().build()
-    project.pluginManager.apply("uk.org.lidalia.downloaddependencies")
+    project.pluginManager.apply("uk.org.lidalia.download-dependencies")
 
     project.tasks.names shouldContain "downloadDependencies"
   }
@@ -32,7 +32,7 @@ class DownloadDependenciesPluginSpec : StringSpec({
       .withParent(childProject2)
       .build()
 
-    rootProject.pluginManager.apply("uk.org.lidalia.downloaddependencies")
+    rootProject.pluginManager.apply("uk.org.lidalia.download-dependencies")
 
     listOf(
       rootProject,

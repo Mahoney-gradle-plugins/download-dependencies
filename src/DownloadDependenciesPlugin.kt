@@ -1,4 +1,4 @@
-package uk.org.lidalia.gradle.plugins.downloaddependencies
+package gradle.plugins.uk.org.lidalia.downloaddependencies
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
